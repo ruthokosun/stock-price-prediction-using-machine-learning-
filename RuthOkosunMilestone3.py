@@ -1,4 +1,3 @@
-import streamlit as st
 import pandas as pd
 import numpy as np
 
@@ -6,11 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set_style('whitegrid')
 plt.style.use("fivethirtyeight")
-
-st.title("Stock Price Prediction Using Machine Learning and Deep Learning Models")
-st.header("Grand Canyon University,Department of Computer science")
-st.subheader("Capstone Milestone 3")
-st.sidebar.header("Ruth Okosun ")
+%matplotlib inline
 
 # For reading stock data from yahoo
 from pandas_datareader.data import DataReader
@@ -22,9 +17,7 @@ yf.pdr_override()
 # For time stamps
 from datetime import datetime
 
-stocks = st.text_input("Enter your stock ticker: ")
-while stocks == "":
-    continue
+stocks = input("Enter your stock ticker: ")
 company_name = []
 company_list = []
 
@@ -54,7 +47,7 @@ for stock in tech_list:
 #    company["company_name"] = com_name
     
 df = pd.concat(company_list, axis=0)
-st.write(df.tail(20))
+df.tail(10)
 # Let's see a historical view of the closing price
 plt.figure(figsize=(15, 10))
 plt.subplots_adjust(top=1.25, bottom=1.2)
@@ -68,7 +61,6 @@ for i, company in enumerate(company_list, 1):
     
     
 plt.tight_layout()
-st.pyplot()
 
 # Now let's plot the total volume of stock being traded each day
 plt.figure(figsize=(15, 10))
@@ -80,11 +72,8 @@ for i, company in enumerate(company_list, 1):
     plt.ylabel('Volume')
     plt.xlabel(None)
     plt.title(f"Sales Volume for {tech_list[i - 1]}")
-
-st.set_option('deprecation.showPyplotGlobalUse', False) 
-
+    
 plt.tight_layout()
-st.pyplot()
 
 ma_day = [10, 20, 50]
 
@@ -96,13 +85,11 @@ for ma in ma_day:
 fig, axes = plt.subplots(1)
 fig.set_figheight(10)
 fig.set_figwidth(15)
-#st.subheader('Adj Close vs MA for 10 & 50 days Moving Averages')
-#stockKey['MA'].plot(ax=axes, legend=True, linestyle='--', marker='o')
+
 stockKey[['Adj Close', 'MA for 10 days', 'MA for 20 days', 'MA for 50 days']].plot(ax = axes)
 axes.set_title(stocks)
    
 fig.tight_layout()
-st.pyplot()
 
 df= df.reset_index()
 df.head()
@@ -133,7 +120,6 @@ for i, company in enumerate(company_list, 1):
     plt.title(f'{company_name[i - 1]}')
     
 plt.tight_layout()
-st.pyplot()
 
 # Grab all the closing prices for the tech stock list into one DataFrame
 
@@ -194,7 +180,6 @@ plt.title('Correlation of stock return')
 plt.subplot(2, 2, 2)
 sns.heatmap(closing_df.corr(), annot=True, cmap='summer')
 plt.title('Correlation of stock closing price')
-st.pyplot()
 
 rets = tech_rets.dropna()
 
@@ -215,14 +200,14 @@ area = np.pi * 20
 # Get the stock quote
 df = pdr.get_data_yahoo(stocks, start='2012-01-01', end=datetime.now())
 # Show teh data
-print(df)
+df
 
 plt.figure(figsize=(16,6))
 plt.title('Close Price History')
 plt.plot(df['Close'])
 plt.xlabel('Date', fontsize=18)
 plt.ylabel('Close Price USD ($)', fontsize=18)
-st.pyplot()
+plt.show()
 
 # Create a new dataframe with only the 'Close column 
 data = df.filter(['Close'])
@@ -262,9 +247,11 @@ x_train, y_train = np.array(x_train), np.array(y_train)
 # Reshape the data
 x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1], 1))
 # x_train.shape
-from keras.layers import dense, LSTM
+
+import tensorflow
+import keras 
 from keras.models import Sequential
-#keras.layers import Dense, lstm
+from keras.layers import Dense, lstm
 
 # Build the LSTM model
 model = Sequential()
@@ -304,7 +291,7 @@ rmse
 # Plot the data
 train = data[:training_data_len]
 valid = data[training_data_len:]
-st.subheader.valid['Predictions'] = predictions
+valid['Predictions'] = predictions
 # Visualize the data
 plt.figure(figsize=(16,6))
 plt.title('Model')
@@ -313,7 +300,7 @@ plt.ylabel('Close Price USD ($)', fontsize=18)
 plt.plot(train['Close'])
 plt.plot(valid[['Close', 'Predictions']])
 plt.legend(['Train', 'Val', 'Predictions'], loc='lower right')
-st.pyplot()
+plt.show()
 
 
 # Show the valid and predicted prices
